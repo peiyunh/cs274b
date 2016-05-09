@@ -64,7 +64,7 @@ for (xi,xj) in zip(rows,cols):
     w = MI[xi][xj]
     G.edge(str(xi),str(xj),label=str(w))
 
-G.render('output/MST.png', view=True)
+G.render('output/MST', view=True)
 
 ### Problem 1(d)
 # report the average log-likelihood

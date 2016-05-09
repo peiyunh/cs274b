@@ -12,7 +12,7 @@ for i in xrange(n):
     G.node(str(i),label=lbl)
 for (xi,xj) in E:
     G.edge(str(xi),str(xj))
-G.render('output/loopy.png', view=True)
+G.render('output/loopy', view=True)
 
 #
 import pyGM as gm
