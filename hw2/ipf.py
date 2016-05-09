@@ -41,15 +41,19 @@ for (i,j) in E:
     fmap[(i,j)] = len(f) 
     f.append(gm.Factor([X[i],X[j]], 1.0))
 
+model = gm.GraphModel(f)
+
 import ipdb
-niter = 10
+niter = 3
+
+lnzs = []
+lls = []
 # for each iteration
 for it in xrange(niter):
     # for each edge
     for (i,j) in E:
+        print 'Iter ', it, 'Edge ', (i,j), 
         # variational elimination for marginal probability 
-        model = gm.GraphModel(f)
-        
         pri = [1.0 for Xi in X]
         pri[i], pri[j] = 2.0, 2.0
         order = gm.eliminationOrder(model, orderMethod='minfill', priority=pri)[0]
@@ -59,13 +63,23 @@ for it in xrange(niter):
 
         pij = model.joint()
         lnZ = np.log(pij.sum())
-        #print 'lnZ: ', lnZ
         pij /= pij.sum()
-        #print pij, '\n', pij.table
 
         #
         ij = fmap[(i,j)]
         f[ij] *= ph[ij] / pij
 
-    print 'iter %d' % it
-#
+        # evaluate ll
+        model = gm.GraphModel(f) 
+        lll = np.array([model.logValue(D[i]) for i in xrange(len(D))])
+        ll = lll.mean() - lnZ 
+        
+        print 'Partition Function: ', lnZ, 
+        print 'Log-Likelihood: ', ll
+
+        lls.append(ll)
+        lnzs.append(lnZ)
+
+from matplotlib import pyplot as plt
+plt.plot(lls)
+plt.show()
